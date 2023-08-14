@@ -6,7 +6,7 @@ var server = net.createServer(function(connection) {
       console.log('client disconnected');
    });
    
-   connection.write('Hello World!\r\n');
+   connection.write('Welcome to the chat!\r\n');
    connection.pipe(connection);
 });
 
@@ -17,16 +17,12 @@ server.listen(8080, function() {
 let sockets = [];
 
 server.on('connection', function(sock) {
-    console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
+    console.log('CONNECTED: ' + sock.remoteAddress + ' : ' + sock.remotePort);
     sockets.push(sock);
-
-  let originalSock = sock;
 
     sock.on('data', function(data) {
         console.log(sock.remotePort + ': ' + data);
         sockets.forEach(function (eachSock, index, array) {
-
-        let sockPort = sock.remotePort;
         if (eachSock != sock) {
           sock.write(sock.remotePort + " said " + data + '\n');
         }
@@ -34,6 +30,7 @@ server.on('connection', function(sock) {
     });
   
   sock.on('end', function (data) {
+    // TODO - incomplete, still need to handle client disconnection gracefully
     let closedSocket = sockets.indexOf(sock.index)
     sockets.splice(sock, closedSocket)
   });
